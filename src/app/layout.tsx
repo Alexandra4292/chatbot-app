@@ -15,7 +15,12 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="et">
-      <body>{children}</body>
+      <body className="flex h-dvh flex-col">
+        <div className="min-h-0 flex-1">{children}</div>
+        <footer className="shrink-0 border-t bg-sidebar px-4 py-2 text-center text-xs text-muted-foreground">
+          © 2026 Tripod. Built with Claude Code
+        </footer>
+      </body>
     </html>
   );
 }
