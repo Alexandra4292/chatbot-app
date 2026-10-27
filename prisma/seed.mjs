@@ -20,7 +20,15 @@ const DEFAULT_PROMPTS = [
   },
 ];
 
+// Runs on every start, so it must be safe to repeat. Defaults are added only while the
+// table is empty, so prompts the user edited or deleted are not brought back on restart.
+// The upsert on the unique name guards against duplicates if two instances start at once.
 async function main() {
+  const existing = await prisma.systemPrompt.count();
+  if (existing > 0) {
+    console.log(`Seed skipped: ${existing} system prompts already exist.`);
+    return;
+  }
   for (const prompt of DEFAULT_PROMPTS) {
     await prisma.systemPrompt.upsert({
       where: { name: prompt.name },
