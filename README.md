@@ -2,14 +2,18 @@
 
 Candidate-facing AI chatbot for Tripod. Next.js (App Router) + TypeScript, Tailwind CSS, shadcn/ui, Prisma + PostgreSQL. AI answers are mocked (`src/lib/mock-ai.ts`, 1.5 s delay).
 
-## Deployment (Railway)
+## Deployment (Render)
 
-1. Add a PostgreSQL service in the Railway project and link it to this app so `DATABASE_URL` is set (see `.env.example`).
-2. Railway deploys automatically from `main`:
-   - build: `prisma generate && next build` (no database needed)
-   - start: `prisma migrate deploy && next start` (creates/updates tables, listens on `PORT`)
-3. Once, after the first deploy, add the default system prompts:
-   `npx prisma db seed` (e.g. via `railway run npx prisma db seed`).
+1. **Create the database:** in the Render dashboard choose **New → PostgreSQL** and create an instance. When it is ready, copy its **Internal Database URL**.
+2. **Create the web service:** choose **New → Web Service** and connect this GitHub repo (branch `main`, runtime Node).
+   - Build Command: `npm install && npm run build`
+   - Start Command: `npm run start`
+3. **Add the environment variable:** under the web service's **Environment**, add `DATABASE_URL` with the database URL from step 1 (see `.env.example`). Do not set `NODE_ENV=production` for the build, because the build needs the dev dependencies (Prisma CLI, Tailwind, TypeScript).
+4. **Deploy:** Render builds and deploys automatically on every push to `main`.
+   - `npm run build` runs `prisma generate && next build` and needs no database.
+   - `npm run start` runs `prisma migrate deploy && next start`, which creates/updates the tables and listens on the `PORT` that Render provides.
+   - `package.json` requires Node `>=20` via `engines`, so Render does not use its default Node version.
+5. **Seed once:** after the first successful deploy, open the web service's **Shell** tab and run `npx prisma db seed` once to add the three default system prompts ("Kandidaadi KKK", "Protsessi selgitaja", "Tööandja nõustaja").
 
 ## API
 
